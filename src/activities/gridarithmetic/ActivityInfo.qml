@@ -36,5 +36,5 @@ ActivityInfo {
   manual: ""
   credit: ""
   section: "fun"
-  createdInVersion: 
+  createdInVersion: 0
 }
