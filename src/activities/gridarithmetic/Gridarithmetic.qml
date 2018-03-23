@@ -50,6 +50,11 @@ ActivityBase {
             property Item main: activity.main
             property alias background: background
             property alias bar: bar
+            property alias expression: expression.text
+            property alias repeater: repeater
+            property alias cells: repeater.model
+            property real rows: Math.sqrt(cells)
+            property real columns: Math.sqrt(cells)
             property alias bonus: bonus
         }
 
@@ -72,52 +77,62 @@ ActivityBase {
                     id: menuBar
                     width: parent.width
                     spacing: 10
-                    Rectangle {
+
+                    GCText {
                         id: expression
                         width: menuBar.width / 2
                         height: menuBar.height
-                        color: "#00D0FF"
+                        color: "#00D0D0"
                     }
 
-                    Image {
+                    BarButton {
                         id: okButton
                         source: "qrc:/gcompris/src/core/resource/bar_ok.svg"
                         sourceSize.height: menuBar.height
+                        onClicked: Activity.checkWin()
                     }
 
                 }
 
                 // Bottom Grid
-                GridView {
+                Grid {
                     id: arithmeticBoard
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: interactionArea.height - menuBar.height
                     width: height
-                    cellWidth: width / 5
-                    cellHeight: cellWidth
-                    model: 25
-                    delegate: cell
+                    rows: 5
+                    columns: 5
 
-                    Component {
-                        id: cell
+                    Repeater {
+                        id: repeater
+                        model: 25
+                        delegate: cell
 
-                        Rectangle {
-                            id: cellSquare
-                            width: arithmeticBoard.cellWidth
-                            height: arithmeticBoard.cellHeight
-                            border.width: 2
-                            border.color: "#000000"
+                        Component {
+                            id: cell
 
-                            TextInput {
-                                id: cellSquareText
-                                width: cellSquare.width
-                                height: cellSquare.height
-                                font.pixelSize: height * 0.70
-                                padding: 2
-                                maximumLength: 1
-                                horizontalAlignment: TextInput.AlignHCenter
-                                validator: RegExpValidator { regExp: /[0-9+-*]/ }
+                            Rectangle {
+                                id: cellSquare
+                                width: arithmeticBoard.width / 5
+                                height: arithmeticBoard.height / 5
+                                border.width: 2
+                                border.color: "#000000"
 
+                                property alias cellText: cellSquareText.text
+                                property alias cellTextColor: cellSquareText.color
+
+                                TextInput {
+                                    id: cellSquareText
+                                    width: cellSquare.width
+                                    height: cellSquare.height
+                                    font.pixelSize: height * 0.70
+                                    padding: 2
+                                    maximumLength: 1
+                                    horizontalAlignment: TextInput.AlignHCenter
+                                    validator: RegExpValidator { regExp: /[0-9+-*=]/ }
+                                    text: ""
+                                    color: "#000000"
+                                }
                             }
                         }
                     }
@@ -132,10 +147,11 @@ ActivityBase {
 
         Bar {
             id: bar
-            content: BarEnumContent { value: help | home | level }
+            content: BarEnumContent { value: help | home | reload | level }
             onHelpClicked: {
                 displayDialog(dialogHelp)
             }
+            onReloadClicked: Activity.initLevel()
             onPreviousLevelClicked: Activity.previousLevel()
             onNextLevelClicked: Activity.nextLevel()
             onHomeClicked: activity.home()
