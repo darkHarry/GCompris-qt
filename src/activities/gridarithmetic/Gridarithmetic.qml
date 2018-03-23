@@ -34,8 +34,10 @@ ActivityBase {
         id: background
         anchors.fill: parent
         color: "#ABCDEF"
+        height: width
         signal start
         signal stop
+
 
         Component.onCompleted: {
             activity.start.connect(start)
@@ -54,10 +56,73 @@ ActivityBase {
         onStart: { Activity.start(items) }
         onStop: { Activity.stop() }
 
-        GCText {
-            anchors.centerIn: parent
-            text: "gridarithmetic activity"
-            fontSize: largeSize
+        Rectangle {
+            id: interactionArea
+            width: Math.min(background.width, background.height)
+            height: width
+            anchors.horizontalCenter: background.horizontalCenter
+            anchors.top: background.top
+
+            Column {
+                width: interactionArea.width
+                height: interactionArea.height
+
+                // Top MenuBar
+                Row {
+                    id: menuBar
+                    width: parent.width
+                    spacing: 10
+                    Rectangle {
+                        id: expression
+                        width: menuBar.width / 2
+                        height: menuBar.height
+                        color: "#00D0FF"
+                    }
+
+                    Image {
+                        id: okButton
+                        source: "qrc:/gcompris/src/core/resource/bar_ok.svg"
+                        sourceSize.height: menuBar.height
+                    }
+
+                }
+
+                // Bottom Grid
+                GridView {
+                    id: arithmeticBoard
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    height: interactionArea.height - menuBar.height
+                    width: height
+                    cellWidth: width / 5
+                    cellHeight: cellWidth
+                    model: 25
+                    delegate: cell
+
+                    Component {
+                        id: cell
+
+                        Rectangle {
+                            id: cellSquare
+                            width: arithmeticBoard.cellWidth
+                            height: arithmeticBoard.cellHeight
+                            border.width: 2
+                            border.color: "#000000"
+
+                            TextInput {
+                                id: cellSquareText
+                                width: cellSquare.width
+                                height: cellSquare.height
+                                font.pixelSize: height * 0.70
+                                padding: 2
+                                maximumLength: 1
+                                horizontalAlignment: TextInput.AlignHCenter
+                                validator: RegExpValidator { regExp: /[0-9+-*]/ }
+
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         DialogHelp {
