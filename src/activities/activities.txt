@@ -63,6 +63,7 @@ gnumch-inequality
 gnumch-multiples
 gnumch-primes
 graph-coloring
+gridarithmetic
 guesscount
 guessnumber
 hangman
