@@ -38,7 +38,6 @@ ActivityBase {
         signal start
         signal stop
 
-
         Component.onCompleted: {
             activity.start.connect(start)
             activity.stop.connect(stop)
@@ -64,7 +63,7 @@ ActivityBase {
         Rectangle {
             id: interactionArea
             width: Math.min(background.width, background.height)
-            height: width
+            height: width - bar.height
             anchors.horizontalCenter: background.horizontalCenter
             anchors.top: background.top
 
